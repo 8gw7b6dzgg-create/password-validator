@@ -1,0 +1,18 @@
+1. Abcdefg1: PASS
+2. Secret2024: PASS
+3. Digit: PASS
+4. Length 8: PASS
+5. Length 7: PASS
+6. Length 64: PASS
+7. Non-string: PASS
+8. Invalid range: PASS
+9. Zero minimum: PASS
+10. Empty: PASS
+11. Error order: PASS
+12. Cyrillic: PASS
+13. Length 65: PASS
+14. Tab: PASS
+15. Unicode code points: PASS
+16. All functions reject type: PASS
+17. Parameter types: PASS
+Total: 17, passed: 17, failed: 0

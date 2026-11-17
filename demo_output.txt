@@ -1,0 +1,5 @@
+sport2024 → Нарушено: NO_MIXED_CASE
+Sport2024 → Пароль принят
+abc → Нарушено: TOO_SHORT, NO_DIGIT, NO_MIXED_CASE
+Ab 12345 → Нарушено: HAS_SPACE
+Ab1 → Длина не подходит
