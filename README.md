@@ -1,69 +1,129 @@
+<div align="center">
+
 # Валидатор пароля
 
-Учебный модуль C++17 / Qt 6 по ТЗ «Валидатор пароля».
+**Приложение на C++17 и Qt 6, которое объясняет каждое нарушение правил пароля.**
 
-## Интерфейс
+[![Build and test](https://github.com/8gw7b6dzgg-create/password-validator/actions/workflows/build.yml/badge.svg)](https://github.com/8gw7b6dzgg-create/password-validator/actions/workflows/build.yml)
+![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&logoColor=white)
+![Qt 6](https://img.shields.io/badge/Qt-6-41CD52?logo=qt&logoColor=white)
+
+[Скачать программу](https://github.com/8gw7b6dzgg-create/password-validator/releases/latest) · [Отчёт PDF](report.pdf) · [Отчёт Word](report.docx)
+
+</div>
+
 ![Успешная проверка пароля](screenshots/valid.png)
 
-## Отчёт
-- [Отчёт PDF](report.pdf)
-- [Отчёт Word с чёрным текстом](report.docx)
+## Возможности
 
-## Готовая программа
-В разделе Releases находится сборка для macOS Apple Silicon и архив исходников.
-Для Windows и Linux проект собирается из исходного кода.
+- Проверка при вводе с отдельной подсказкой для каждого правила.
+- Показ и скрытие пароля, счётчик символов и очистка поля.
+- Повторно используемый модуль без ввода и вывода.
+- Консольная демонстрация пяти сценариев из задания.
+- 17 автоматических проверок, включая все 12 обязательных сценариев.
+- Отчёт на 3 страницы со скриншотами в PDF и Word. Текст отчёта — чёрный.
 
-## Сборка (Windows, Linux, macOS)
-Установите компилятор C++17, CMake 3.16+ и Qt 6 с модулями Core и Widgets.
-Для Windows рекомендуется Qt Creator с комплектом Qt 6 MinGW либо MSVC.
-Откройте CMakeLists.txt в Qt Creator, выберите установленный комплект и нажмите «Собрать», затем запустите password_gui.
+Пароли обрабатываются на устройстве, не сохраняются и не передаются по сети.
+Программа проверяет учебные правила; она не оценивает криптографическую стойкость пароля.
 
-Из терминала:
-```
-cmake -S . -B build -DCMAKE_PREFIX_PATH="путь/к/Qt/6.x/комплекту"
+## Правила проверки
+
+| Правило | Условие | Код нарушения |
+| --- | --- | --- |
+| Минимальная длина | Не меньше 8 символов | `TOO_SHORT` |
+| Максимальная длина | Не больше 64 символов | `TOO_LONG` |
+| Цифра | Есть символ от `0` до `9` | `NO_DIGIT` |
+| Регистр | Есть латинские `A–Z` и `a–z` | `NO_MIXED_CASE` |
+| Пробельные символы | Нет пробела, табуляции и других символов `QChar::isSpace` | `HAS_SPACE` |
+
+Нарушения возвращаются в порядке строк таблицы. Пустой список означает, что пароль принят.
+Длина считается в кодовых точках Unicode. Кириллица не заменяет латинские буквы при проверке регистра.
+
+<details>
+<summary>Пример с несколькими нарушениями</summary>
+
+![Несколько нарушений](screenshots/invalid.png)
+
+Строка `abc def` возвращает `TOO_SHORT`, `NO_DIGIT`, `NO_MIXED_CASE`, `HAS_SPACE`.
+
+</details>
+
+## Запуск
+
+Готовая сборка **для macOS Apple Silicon** находится в [релизах](https://github.com/8gw7b6dzgg-create/password-validator/releases/latest).
+Распакуйте архив и откройте `password_gui.app`.
+Сборка не нотарифицирована Apple.
+
+Для Windows, Linux и других конфигураций macOS соберите проект из исходников.
+
+### Через Qt Creator
+
+1. Установите Qt 6 с модулями Core и Widgets и компилятор C++17.
+2. Откройте `CMakeLists.txt` в Qt Creator.
+3. Выберите комплект Qt, соберите проект и запустите `password_gui`.
+
+### Через терминал
+
+Требуются CMake 3.16+, компилятор C++17 и Qt 6.
+Если CMake не находит Qt автоматически, укажите каталог комплекта Qt через `CMAKE_PREFIX_PATH`.
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="путь/к/Qt/6.x/комплекту"
 cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
-Исполняемые файлы: password_gui (интерфейс), password_demo (пять примеров), password_tests (17 проверок).
-Для генераторов с несколькими конфигурациями они находятся в build/Release.
-На macOS графическая программа может собираться как build/password_gui.app.
 
-## Использование
-Введите пароль. Подсказки обновляются сразу; кнопку «Проверить пароль» также можно вызвать Enter.
-«Показать пароль» переключает маскировку, «Очистить» очищает ввод.
-Пароли не записываются в файл и не передаются по сети.
-Проверка означает только выполнение учебных правил, а не оценку стойкости пароля.
+| Цель | Назначение |
+| --- | --- |
+| `password_gui` | Графическое приложение |
+| `password_demo` | Пять примеров интеграции |
+| `password_tests` | 17 автоматических тестов |
+
+В многоконфигурационных сборках исполняемые файлы находятся в `build/Release`.
+На macOS интерфейс собирается как `build/password_gui.app`.
 
 ## Подключение модуля
-Добавьте src/password_validator.cpp и src/password_validator.h в проект, подключите Qt6::Core.
-```
+
+Добавьте `src/password_validator.cpp` и заголовочный файл в свой проект и подключите `Qt6::Core`.
+
+```cpp
 #include "password_validator.h"
+
 auto errors = password_validator::validate_password(QString("Sport2024"));
 // errors.isEmpty() == true
 ```
-Функции принимают QVariant для проверки типов во время выполнения.
-Строка передаётся как QString (не как литерал const char*).
-Параметры длины имеют тип int. Другие типы, min < 1 и max < min
-вызывают std::invalid_argument("ERR_INVALID_ARGUMENT").
 
-check_length(password, min, max) -> bool
-has_digit(password) -> bool
-has_upper_and_lower(password) -> bool
-contains_space(password) -> bool
-validate_password(password) -> QStringList
+| Функция | Результат |
+| --- | --- |
+| `check_length(password, min, max)` | Допустима ли длина |
+| `has_digit(password)` | Есть ли цифра 0–9 |
+| `has_upper_and_lower(password)` | Есть ли оба латинских регистра |
+| `contains_space(password)` | Есть ли пробельный символ |
+| `validate_password(password)` | `QStringList` с кодами нарушений |
 
-Длина считается в кодовых точках Unicode, без обрезки и нормализации строки.
-Цифры: только 0–9. Регистр: только A–Z и a–z.
-Пробельные символы определяются QChar::isSpace (включая пробел и табуляцию).
-Порядок нарушений: TOO_SHORT, TOO_LONG, NO_DIGIT, NO_MIXED_CASE, HAS_SPACE.
+Функции принимают `QVariant` и проверяют типы во время выполнения.
+Передавайте строку как `QString`, а границы длины как `int`.
+Неверный тип, `min < 1` или `max < min` вызывает `std::invalid_argument("ERR_INVALID_ARGUMENT")`.
 
-## Проверенные результаты
-В test_protocol.txt записан реальный запуск: 17 PASS, 0 FAIL.
-Первые 12 тестов соответствуют таблице ТЗ; остальные проверяют дополнительные границы.
-В demo_output.txt находится вывод интеграционных примеров.
-В screenshots — снимки реального окна с публичными учебными строками.
+## Проверки и документация
 
-## Состав
-src/ — модуль, графический интерфейс и консольная демонстрация.
-tests/ — автономный тестовый исполняемый файл без внешнего тестового фреймворка.
-report.docx и report.pdf — трёхстраничный отчёт со скриншотами.
+Первые 12 тестов соответствуют ТЗ. Дополнительные тесты проверяют длину 65,
+табуляцию, Unicode и неверные типы параметров.
+
+- [Протокол локального запуска — 17 PASS, 0 FAIL](test_protocol.txt)
+- [Вывод консольной демонстрации](demo_output.txt)
+- [Отчёт PDF](report.pdf)
+- [Отчёт Word](report.docx)
+- [Автоматическая сборка и тесты на Linux](https://github.com/8gw7b6dzgg-create/password-validator/actions)
+
+```text
+src/
+  password_validator.h    Публичный интерфейс модуля
+  password_validator.cpp  Реализация правил
+  main.cpp                Графическое приложение
+  demo.cpp                Консольная демонстрация
+ tests/
+  tests.cpp               Автоматические проверки
+screenshots/              Снимки работающего приложения
+CMakeLists.txt            Настройки сборки
+```
